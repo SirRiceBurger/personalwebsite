@@ -206,7 +206,7 @@
       padding: 1.1rem 2.4rem;
       cursor: pointer;
       text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
+      transition: background 0.2s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       display: inline-block;
     }
 
@@ -223,7 +223,7 @@
       padding: 1.1rem 2.4rem;
       cursor: pointer;
       text-decoration: none;
-      transition: border-color 0.2s, color 0.2s;
+      transition: border-color 0.2s, color 0.2s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       display: inline-block;
     }
 
@@ -246,6 +246,7 @@
         linear-gradient(var(--border) 1px, transparent 1px),
         linear-gradient(90deg, var(--border) 1px, transparent 1px);
       background-size: 52px 52px;
+      background-position: var(--px, 0px) var(--py, 0px);
       opacity: 0.6;
     }
 
@@ -703,13 +704,31 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* Base reveal — all variants start hidden */
     .reveal {
       opacity: 0;
-      transform: translateY(22px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
+      transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: var(--delay, 0ms);
+    }
+    .reveal-up    { transform: translateY(36px); }
+    .reveal-left  { transform: translateX(-40px); }
+    .reveal-right { transform: translateX(40px); }
+    .reveal-scale { transform: translateY(20px) scale(0.97); }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
     }
 
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    /* Section header clip-path text sweep */
+    .section-header h2 {
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .section-header.visible h2 {
+      clip-path: inset(0 0% 0 0);
+    }
 
     /* ── HAMBURGER ── */
     .nav-hamburger {
@@ -784,9 +803,55 @@
         animation: none;
       }
     }
+
+    /* ── STAT ANIMATIONS ── */
+    @keyframes statPulse {
+      0%, 100% { text-shadow: 0 0 0px transparent; }
+      50% { text-shadow: 0 0 18px rgba(200, 169, 110, 0.35); }
+    }
+
+    .stat-num {
+      animation: statPulse 3s ease-in-out infinite;
+    }
+
+    .stat-cell {
+      transition: background 0.2s, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .stat-cell:hover { transform: scale(1.03); }
+
+    /* ── CURSOR ── */
+    @media (pointer: fine) {
+      body { cursor: none; }
+      a, button { cursor: none; }
+
+      .cursor-dot {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 99999;
+        top: 0; left: 0;
+        transform: translate(-50%, -50%);
+        transition: transform 0.08s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+        opacity: 0;
+      }
+
+      .cursor-dot.active { opacity: 1; }
+      .cursor-dot.hovering {
+        width: 20px;
+        height: 20px;
+        background: transparent;
+        border: 1px solid var(--accent);
+      }
+    }
   </style>
 </head>
 <body>
+
+  <div class="cursor-dot" aria-hidden="true"></div>
 
   <a class="skip-link" href="#about">Skip to content</a>
 
@@ -821,15 +886,15 @@
     <div class="hero-right">
       <div class="stats-grid">
         <div class="stat-cell">
-          <div class="stat-num">98.6</div>
+          <div class="stat-num" data-target="98.6">98.6</div>
           <div class="stat-label">ATAR · Higher School Certificate</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-num">16</div>
+          <div class="stat-num" data-target="16">16</div>
           <div class="stat-label">Age at University Entry</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-num">5+</div>
+          <div class="stat-num" data-target="5+">5+</div>
           <div class="stat-label">Projects Shipped</div>
         </div>
         <div class="stat-cell">
@@ -849,15 +914,15 @@
       <span class="section-num">01</span>
       <h2>About <em>Me</em></h2>
     </div>
-    <div class="inner reveal">
-      <div class="about-photo-block">
+    <div class="inner">
+      <div class="about-photo-block reveal reveal-left">
         <div class="photo-frame">
           <img src="1771290562613.jfif" alt="Gopal Reissenberger" loading="lazy"
                onerror="this.style.display='none'; this.parentElement.style.background='#1a1a1a';" />
         </div>
         <p class="photo-caption">Brisbane · Australia · b. 2009</p>
       </div>
-      <div class="about-text">
+      <div class="about-text reveal reveal-right">
         <p>
           I'm a mathematics student at the University of Queensland, 16 years old, having graduated high school at 15 with an adjusted ATAR of 98.6.
         </p>
@@ -896,7 +961,7 @@
     </div>
     <div class="exp-items">
 
-      <div class="exp-item reveal">
+      <div class="exp-item reveal reveal-up" style="--delay: 0ms">
         <div>
           <div class="exp-org">MedEntry</div>
           <div class="exp-role">Academic Tutor</div>
@@ -905,7 +970,7 @@
         <div class="exp-date">Jan 2026 – Present</div>
       </div>
 
-      <div class="exp-item reveal">
+      <div class="exp-item reveal reveal-up" style="--delay: 80ms">
         <div>
           <div class="exp-org">MedEntry</div>
           <div class="exp-role">Academic Presenter</div>
@@ -914,7 +979,7 @@
         <div class="exp-date">Nov – Dec 2025</div>
       </div>
 
-      <div class="exp-item reveal">
+      <div class="exp-item reveal reveal-up" style="--delay: 160ms">
         <div>
           <div class="exp-org">ISKCON</div>
           <div class="exp-role">Financial Assistant (Internship)</div>
@@ -923,7 +988,7 @@
         <div class="exp-date">Jan – Feb 2026</div>
       </div>
 
-      <div class="exp-item reveal">
+      <div class="exp-item reveal reveal-up" style="--delay: 240ms">
         <div>
           <div class="exp-org">Phinetic Solutions</div>
           <div class="exp-role">Co-Founder</div>
@@ -932,7 +997,7 @@
         <div class="exp-date">Feb 2025 – Jan 2026</div>
       </div>
 
-      <div class="exp-item reveal">
+      <div class="exp-item reveal reveal-up" style="--delay: 320ms">
         <div>
           <div class="exp-org">Krishna Village</div>
           <div class="exp-role">System Administrator (Volunteer)</div>
@@ -958,7 +1023,7 @@
     </div>
     <div class="grid">
 
-      <div class="project-card reveal">
+      <div class="project-card reveal reveal-scale" style="--delay: 0ms">
         <img class="project-img" src="final-image.jpg" alt="Project MIDAS" loading="lazy" />
         <div class="project-tag">Climate Finance · Stochastic Optimisation</div>
         <div class="project-name">Project MIDAS</div>
@@ -966,21 +1031,21 @@
         <div class="project-meta">Python · Monte Carlo · CVaR · Earth Prize 2026</div>
       </div>
 
-      <div class="project-card reveal">
+      <div class="project-card reveal reveal-scale" style="--delay: 100ms">
         <div class="project-tag">Financial Engineering · Web App</div>
         <div class="project-name">LEDGER</div>
         <div class="project-desc">A comprehensive single-file HTML financial planning app incorporating a Centrelink income test calculator, Monte Carlo portfolio simulation, shock simulator, and JSON import/export.</div>
         <div class="project-meta">HTML · JavaScript · Monte Carlo · Risk Modelling</div>
       </div>
 
-      <div class="project-card reveal">
+      <div class="project-card reveal reveal-scale" style="--delay: 200ms">
         <div class="project-tag">Writing · Financial Engineering</div>
         <div class="project-name">AI in Financial Engineering</div>
         <div class="project-desc">Medium-form article for the Penrose Magazine Writing Competition analysing how AI is reshaping quantitative finance and market microstructure. Selected in the top 20% of contributors.</div>
         <div class="project-meta">Penrose Magazine · CS&amp;E Ambassador · Jan 2026</div>
       </div>
 
-      <div class="project-card reveal">
+      <div class="project-card reveal reveal-scale" style="--delay: 300ms">
         <div class="project-tag">Infrastructure · AI Automation</div>
         <div class="project-name">Krishna Village Systems</div>
         <div class="project-desc">Five-phase Microsoft 365 rollout covering HR, OHS, legal compliance, and automated workflows. Reduced manual administrative load by ~95% using Power Automate and SharePoint.</div>
@@ -1045,7 +1110,7 @@
       </p>
     </div>
     <div class="connect-right">
-      <div class="connect-links reveal">
+      <div class="connect-links reveal reveal-up">
         <a class="connect-link" href="https://calendly.com/sirriceburger/have-a-chat" target="_blank" rel="noopener noreferrer" aria-label="Book a meeting with Gopal on Calendly">
           <span class="connect-link-label">Book a Meeting</span>
           <span class="connect-link-arrow" aria-hidden="true">↗</span>
@@ -1095,6 +1160,119 @@
     }, { threshold: 0.1 });
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── STATS COUNT-UP ──
+    (function () {
+      const DURATION = 1400;
+
+      function parseTarget(raw) {
+        // Returns { value: Number, suffix: String, decimals: Number }
+        if (raw.endsWith('%')) return { value: parseFloat(raw), suffix: '%', decimals: 0 };
+        if (raw.endsWith('+')) return { value: parseFloat(raw), suffix: '+', decimals: 0 };
+        const n = parseFloat(raw);
+        const decimals = raw.includes('.') ? raw.split('.')[1].length : 0;
+        return { value: n, suffix: '', decimals };
+      }
+
+      function animateCell(el) {
+        const raw = el.dataset.target;
+        if (!raw) return;
+        const { value, suffix, decimals } = parseTarget(raw);
+        const start = performance.now();
+
+        function step(now) {
+          const t = Math.min((now - start) / DURATION, 1);
+          const progress = 1 - Math.pow(1 - t, 3); // ease-out cubic
+          const current = value * progress;
+          el.textContent = current.toFixed(decimals) + suffix;
+          if (t < 1) requestAnimationFrame(step);
+          else el.textContent = value.toFixed(decimals) + suffix;
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      const statsGrid = document.querySelector('.stats-grid');
+      if (statsGrid) {
+        let fired = false;
+        const statsObserver = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting && !fired) {
+              fired = true;
+              statsGrid.querySelectorAll('.stat-num[data-target]').forEach(animateCell);
+              statsObserver.unobserve(statsGrid);
+            }
+          });
+        }, { threshold: 0.3 });
+        statsObserver.observe(statsGrid);
+      }
+    })();
+
+    // ── CUSTOM CURSOR ──
+    (function() {
+      const dot = document.querySelector('.cursor-dot');
+      if (!dot || !window.matchMedia('(pointer: fine)').matches) return;
+
+      let mx = 0, my = 0, dx = 0, dy = 0;
+      let raf;
+
+      document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        dot.classList.add('active');
+      });
+
+      document.addEventListener('mouseleave', () => dot.classList.remove('active'));
+
+      const interactives = 'a, button, .stat-cell, .project-card, .connect-link';
+      document.querySelectorAll(interactives).forEach(el => {
+        el.addEventListener('mouseenter', () => dot.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => dot.classList.remove('hovering'));
+      });
+
+      function loop() {
+        dx += (mx - dx) * 0.18;
+        dy += (my - dy) * 0.18;
+        dot.style.left = dx + 'px';
+        dot.style.top  = dy + 'px';
+        raf = requestAnimationFrame(loop);
+      }
+      loop();
+    })();
+
+    // ── MAGNETIC BUTTONS ──
+    (function() {
+      document.querySelectorAll('.btn-primary, .btn-ghost').forEach(btn => {
+        btn.addEventListener('mousemove', e => {
+          const r = btn.getBoundingClientRect();
+          const x = e.clientX - (r.left + r.width  / 2);
+          const y = e.clientY - (r.top  + r.height / 2);
+          btn.style.transform = `translate(${x * 0.22}px, ${y * 0.22}px)`;
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = '';
+        });
+      });
+    })();
+
+    // ── HERO PARALLAX ──
+    (function() {
+      const hero = document.getElementById('hero');
+      const heroRight = hero ? hero.querySelector('.hero-right') : null;
+      if (!heroRight) return;
+
+      hero.addEventListener('mousemove', e => {
+        const r = hero.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        const y = (e.clientY - r.top)  / r.height - 0.5;
+        heroRight.style.setProperty('--px', `${x * 12}px`);
+        heroRight.style.setProperty('--py', `${y * 12}px`);
+      });
+
+      hero.addEventListener('mouseleave', () => {
+        heroRight.style.removeProperty('--px');
+        heroRight.style.removeProperty('--py');
+      });
+    })();
   </script>
 
 </body>
