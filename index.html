@@ -890,9 +890,9 @@
 
     /* ── CLICK FLASH ── */
     @keyframes textFlash {
-      0%   { filter: brightness(1); text-shadow: none; }
-      20%  { filter: brightness(2.2); text-shadow: 0 0 22px rgba(255,255,255,0.65); }
-      100% { filter: brightness(1); text-shadow: none; }
+      0%   { opacity: 1; filter: brightness(1); text-shadow: none; }
+      20%  { opacity: 1; filter: brightness(2.2); text-shadow: 0 0 22px rgba(255,255,255,0.65); }
+      100% { opacity: 1; filter: brightness(1); text-shadow: none; }
     }
     .text-flash {
       animation: textFlash 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -1229,6 +1229,14 @@
   </footer>
 
   <script>
+    // After hero animations finish, bake opacity:1 so clicking text doesn't flash invisible
+    setTimeout(() => {
+      document.querySelectorAll('h1, .hero-eyebrow, .hero-desc, .hero-cta, .stats-grid, .hero-quote').forEach(el => {
+        el.style.opacity = '1';
+        el.style.animation = 'none';
+      });
+    }, 2000);
+
     const hamburger = document.querySelector('.nav-hamburger');
     const navLinks = document.querySelector('.nav-links');
     hamburger.addEventListener('click', () => {
