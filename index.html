@@ -132,6 +132,10 @@
 
     .nav-links a:hover { color: var(--text); }
 
+    .nav-links a.nav-active {
+      color: var(--accent);
+    }
+
     /* ── HERO ── */
     #hero {
       min-height: 100vh;
@@ -601,7 +605,7 @@
       margin-bottom: 1.8rem;
       filter: grayscale(30%);
       border: 1px solid var(--border);
-      transition: filter 0.3s;
+      transition: filter 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .project-card:hover .project-img { filter: grayscale(0%); }
@@ -766,7 +770,8 @@
     /* Section header clip-path text sweep */
     .section-header h2 {
       clip-path: inset(0 100% 0 0);
-      transition: clip-path 0.75s 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: clip-path 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .section-header.visible h2 {
       clip-path: inset(0 0% 0 0);
@@ -864,7 +869,8 @@
 
     /* ── TEXT SWELL ── */
     h1, h2, h3, .exp-role, .project-name, .edu-inst, .connect-link-label {
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       transform-origin: left center;
     }
     h1:hover { transform: scale(1.015); }
@@ -874,7 +880,8 @@
     .connect-link-label:hover { transform: scale(1.02); }
 
     .hero-desc, .about-text p, .exp-desc, .project-desc {
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       transform-origin: left center;
     }
     .hero-desc:hover, .about-text p:hover, .exp-desc:hover, .project-desc:hover {
@@ -883,12 +890,25 @@
 
     /* ── CLICK FLASH ── */
     @keyframes textFlash {
-      0%   { color: inherit; text-shadow: none; }
-      25%  { color: #ffffff; text-shadow: 0 0 30px rgba(255,255,255,0.5); }
-      100% { color: inherit; text-shadow: none; }
+      0%   { filter: brightness(1); text-shadow: none; }
+      20%  { filter: brightness(2.2); text-shadow: 0 0 22px rgba(255,255,255,0.65); }
+      100% { filter: brightness(1); text-shadow: none; }
     }
     .text-flash {
       animation: textFlash 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* ── SCROLL PROGRESS ── */
+    .scroll-progress {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 2px;
+      height: 0%;
+      background: linear-gradient(to bottom, var(--accent-dim), var(--accent));
+      z-index: 9998;
+      transition: height 0.1s linear;
+      box-shadow: 0 0 6px rgba(200, 169, 110, 0.4);
     }
 
     /* ── CURSOR ── */
@@ -923,6 +943,7 @@
 <body>
 
   <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"></div>
 
   <a class="skip-link" href="#about">Skip to content</a>
 
@@ -1368,6 +1389,88 @@
         el.classList.add('text-flash');
         el.addEventListener('animationend', () => el.classList.remove('text-flash'), { once: true });
       });
+    })();
+    // ── SCROLL PROGRESS BAR ──
+    (function() {
+      const bar = document.querySelector('.scroll-progress');
+      if (!bar) return;
+      window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+        const total = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.height = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
+      }, { passive: true });
+    })();
+
+    // ── NAV SCROLL SPY ──
+    (function() {
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+      if (!sections.length || !navLinks.length) return;
+
+      const spy = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            navLinks.forEach(a => {
+              a.classList.toggle('nav-active', a.getAttribute('href') === '#' + id);
+            });
+          }
+        });
+      }, { rootMargin: '-40% 0px -50% 0px' });
+
+      sections.forEach(s => spy.observe(s));
+    })();
+
+    // ── PROJECT CARD IMAGE PARALLAX ──
+    (function() {
+      document.querySelectorAll('.project-card').forEach(card => {
+        const img = card.querySelector('.project-img');
+        if (!img) return;
+
+        card.addEventListener('mousemove', e => {
+          const r = card.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width  - 0.5;
+          const y = (e.clientY - r.top)  / r.height - 0.5;
+          img.style.transform = `scale(1.06) translate(${x * 10}px, ${y * 8}px)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          img.style.transform = '';
+        });
+      });
+    })();
+
+    // ── SECTION NUMBER FLICKER ──
+    (function() {
+      const chars = '0123456789';
+      function scramble(el) {
+        const target = el.textContent;
+        let frame = 0;
+        const totalFrames = 18;
+        const interval = setInterval(() => {
+          if (frame >= totalFrames) {
+            el.textContent = target;
+            clearInterval(interval);
+            return;
+          }
+          el.textContent = target.split('').map((ch, i) => {
+            if (frame > totalFrames - (target.length - i) * 4) return ch;
+            return chars[Math.floor(Math.random() * chars.length)];
+          }).join('');
+          frame++;
+        }, 40);
+      }
+
+      const numObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            scramble(entry.target);
+            numObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      document.querySelectorAll('.section-num').forEach(el => numObserver.observe(el));
     })();
   </script>
 
