@@ -158,7 +158,7 @@
       color: var(--accent);
       margin-bottom: 2.5rem;
       opacity: 0;
-      animation: fadeUp 0.8s ease 0.2s forwards;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
     }
 
     h1 {
@@ -169,7 +169,7 @@
       letter-spacing: -0.01em;
       color: var(--text);
       opacity: 0;
-      animation: fadeUp 0.8s ease 0.35s forwards;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
     }
 
     h1 em { font-style: italic; color: var(--accent); }
@@ -182,7 +182,7 @@
       max-width: 460px;
       line-height: 1.9;
       opacity: 0;
-      animation: fadeUp 0.8s ease 0.5s forwards;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
     }
 
     .hero-cta {
@@ -192,7 +192,7 @@
       align-items: center;
       flex-wrap: wrap;
       opacity: 0;
-      animation: fadeUp 0.8s ease 0.65s forwards;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
     }
 
     .btn-primary {
@@ -259,7 +259,7 @@
       background: var(--border);
       border: 1px solid var(--border);
       opacity: 0;
-      animation: fadeUp 0.8s ease 0.7s forwards;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
     }
 
     .stat-cell {
@@ -299,7 +299,7 @@
       color: var(--text-muted);
       line-height: 1.85;
       opacity: 0;
-      animation: fadeUp 0.8s ease 0.85s forwards;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards;
     }
 
     /* ── SECTIONS ── */
@@ -431,6 +431,48 @@
       color: var(--accent);
       border: 1px solid var(--accent-dim);
       padding: 0.4rem 1rem;
+      position: relative;
+    }
+
+    /* ── TAG TOOLTIPS ── */
+    .tag-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      width: 220px;
+      background: var(--surface);
+      border: 1px solid var(--border-bright);
+      padding: 0.85rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      line-height: 1.6;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      text-transform: none;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 500;
+      white-space: normal;
+      text-align: left;
+    }
+
+    /* Arrow */
+    .tag-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--border-bright);
+    }
+
+    .tag-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     /* ── EXPERIENCE ── */
@@ -508,11 +550,11 @@
       content: '';
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      height: 2px;
+      height: 3px;
       background: var(--accent);
       transform: scaleX(0);
       transform-origin: left;
-      transition: transform 0.3s ease;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .project-card:hover { background: var(--surface); }
@@ -664,7 +706,7 @@
       transition: padding-left 0.25s, color 0.2s;
     }
 
-    .connect-link:hover { padding-left: 0.8rem; color: var(--accent); }
+    .connect-link:hover { padding-left: 1.4rem; color: var(--accent); }
 
     .connect-link-label {
       font-family: var(--serif);
@@ -700,21 +742,21 @@
 
     /* ── ANIMATIONS ── */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(40px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     /* Base reveal — all variants start hidden */
     .reveal {
       opacity: 0;
-      transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-                  transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
       transition-delay: var(--delay, 0ms);
     }
-    .reveal-up    { transform: translateY(36px); }
-    .reveal-left  { transform: translateX(-40px); }
-    .reveal-right { transform: translateX(40px); }
-    .reveal-scale { transform: translateY(20px) scale(0.97); }
+    .reveal-up    { transform: translateY(60px); }
+    .reveal-left  { transform: translateX(-70px); }
+    .reveal-right { transform: translateX(70px); }
+    .reveal-scale { transform: translateY(28px) scale(0.94); }
 
     .reveal.visible {
       opacity: 1;
@@ -724,7 +766,7 @@
     /* Section header clip-path text sweep */
     .section-header h2 {
       clip-path: inset(0 100% 0 0);
-      transition: clip-path 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: clip-path 0.75s 0.1s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .section-header.visible h2 {
       clip-path: inset(0 0% 0 0);
@@ -807,11 +849,11 @@
     /* ── STAT ANIMATIONS ── */
     @keyframes statPulse {
       0%, 100% { text-shadow: 0 0 0px transparent; }
-      50% { text-shadow: 0 0 18px rgba(200, 169, 110, 0.35); }
+      50% { text-shadow: 0 0 28px rgba(200, 169, 110, 0.55), 0 0 6px rgba(200, 169, 110, 0.3); }
     }
 
     .stat-num {
-      animation: statPulse 3s ease-in-out infinite;
+      animation: statPulse 2.5s ease-in-out infinite;
     }
 
     .stat-cell {
@@ -819,6 +861,35 @@
     }
 
     .stat-cell:hover { transform: scale(1.03); }
+
+    /* ── TEXT SWELL ── */
+    h1, h2, h3, .exp-role, .project-name, .edu-inst, .connect-link-label {
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: left center;
+    }
+    h1:hover { transform: scale(1.015); }
+    h2:hover { transform: scale(1.018); }
+    h3:hover { transform: scale(1.02); }
+    .exp-role:hover, .project-name:hover, .edu-inst:hover { transform: scale(1.015); }
+    .connect-link-label:hover { transform: scale(1.02); }
+
+    .hero-desc, .about-text p, .exp-desc, .project-desc {
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: left center;
+    }
+    .hero-desc:hover, .about-text p:hover, .exp-desc:hover, .project-desc:hover {
+      transform: scale(1.006);
+    }
+
+    /* ── CLICK FLASH ── */
+    @keyframes textFlash {
+      0%   { color: inherit; text-shadow: none; }
+      25%  { color: #ffffff; text-shadow: 0 0 30px rgba(255,255,255,0.5); }
+      100% { color: inherit; text-shadow: none; }
+    }
+    .text-flash {
+      animation: textFlash 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
 
     /* ── CURSOR ── */
     @media (pointer: fine) {
@@ -938,14 +1009,14 @@
         <div class="tags-wrapper">
           <span class="tags-label">Relevant Coursework</span>
           <div class="tags">
-            <span class="tag">Quantitative Finance</span>
-            <span class="tag">Monte Carlo</span>
-            <span class="tag">CVaR Optimisation</span>
-            <span class="tag">Systems Engineering</span>
-            <span class="tag">Python</span>
-            <span class="tag">C++</span>
-            <span class="tag">AI Automation</span>
-            <span class="tag">Applied Mathematics</span>
+            <span class="tag" data-def="Application of mathematical models to financial markets, pricing, and risk management.">Quantitative Finance</span>
+            <span class="tag" data-def="Simulation technique using random sampling to approximate probability distributions and outcomes.">Monte Carlo</span>
+            <span class="tag" data-def="Conditional Value at Risk — constraining portfolio optimisation by limiting expected tail losses.">CVaR Optimisation</span>
+            <span class="tag" data-def="Designing and managing complex systems across their full lifecycle with rigorous methodology.">Systems Engineering</span>
+            <span class="tag" data-def="High-level language used for scientific computing, data analysis, and AI automation.">Python</span>
+            <span class="tag" data-def="High-performance systems language used in quantitative finance, HFT, and low-latency applications.">C++</span>
+            <span class="tag" data-def="Applying large language models and ML pipelines to automate complex workflows and decisions.">AI Automation</span>
+            <span class="tag" data-def="Mathematical methods — ODEs, linear algebra, optimisation — applied to real-world problems.">Applied Mathematics</span>
           </div>
         </div>
       </div>
@@ -1271,6 +1342,31 @@
       hero.addEventListener('mouseleave', () => {
         heroRight.style.removeProperty('--px');
         heroRight.style.removeProperty('--py');
+      });
+    })();
+
+    // ── TAG TOOLTIPS ──
+    (function() {
+      document.querySelectorAll('.tag[data-def]').forEach(tag => {
+        const tip = document.createElement('div');
+        tip.className = 'tag-tooltip';
+        tip.textContent = tag.dataset.def;
+        tag.appendChild(tip);
+
+        tag.addEventListener('mouseenter', () => tip.classList.add('visible'));
+        tag.addEventListener('mouseleave', () => tip.classList.remove('visible'));
+      });
+    })();
+
+    (function() {
+      const textSelectors = 'h1, h2, h3, .exp-role, .project-name, .edu-inst, .connect-link-label, .hero-desc, .about-text p, .exp-desc, .project-desc, .hero-quote, .stat-num';
+      document.addEventListener('mousedown', e => {
+        const el = e.target.closest(textSelectors);
+        if (!el) return;
+        el.classList.remove('text-flash');
+        void el.offsetWidth; // reflow to restart animation
+        el.classList.add('text-flash');
+        el.addEventListener('animationend', () => el.classList.remove('text-flash'), { once: true });
       });
     })();
   </script>
